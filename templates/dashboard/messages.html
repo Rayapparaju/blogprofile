@@ -1,0 +1,56 @@
+{% extends 'dashboard/base.html' %}
+{% block content %}
+
+<div class="card">
+    <div class="card-header">
+        <h3><i class="fas fa-envelope"></i> Contact Messages</h3>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Subject</th>
+                        <th>Message</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for msg in messages_list %}
+                    <tr class="{% if not msg.is_read %}unread{% endif %}">
+                        <td><strong>{{ msg.name }}</strong></td>
+                        <td>{{ msg.email }}</td>
+                        <td>{{ msg.subject|truncatechars:30 }}</td>
+                        <td>{{ msg.message|truncatechars:60 }}</td>
+                        <td>
+                            {% if msg.is_read %}
+                            <span class="status status-draft">Read</span>
+                            {% else %}
+                            <span class="status status-published">New</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ msg.created_at|date:"M d, Y" }}</td>
+                        <td class="actions">
+                            {% if not msg.is_read %}
+                            <a href="{% url 'dashboard_message_read' msg.id %}" class="btn btn-sm btn-success" title="Mark as read">
+                                <i class="fas fa-check"></i>
+                            </a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" style="text-align: center; color: var(--text-light);">No messages</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

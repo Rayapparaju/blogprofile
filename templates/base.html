@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if page_title %}{{ page_title }} | {% endif %}BlogProfile</title>
+    <meta name="description" content="A modern blog website built with Django">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <a href="{% url 'home' %}" class="nav-brand">
+                <i class="fas fa-pen-fancy"></i> BlogProfile
+            </a>
+            <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="nav-menu" id="navMenu">
+                <ul class="nav-links">
+                    <li><a href="{% url 'home' %}"><i class="fas fa-home"></i> Home</a></li>
+                    <li class="dropdown">
+                        <a href="#"><i class="fas fa-folder"></i> Categories <i class="fas fa-chevron-down"></i></a>
+                        <ul class="dropdown-menu">
+                            {% for cat in all_categories %}
+                            <li><a href="{% url 'category_posts' cat.slug %}">{{ cat.name }}</a></li>
+                            {% empty %}
+                            <li><a href="#">No categories</a></li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                    <li><a href="{% url 'about' %}"><i class="fas fa-info-circle"></i> About</a></li>
+                    <li><a href="{% url 'contact' %}"><i class="fas fa-envelope"></i> Contact</a></li>
+                </ul>
+                <div class="nav-actions">
+                    <a href="{% url 'search_posts' %}" class="btn btn-icon" title="Search">
+                        <i class="fas fa-search"></i>
+                    </a>
+                    {% if user.is_authenticated and user.is_staff %}
+                    <a href="{% url 'dashboard_home' %}" class="btn btn-primary btn-sm">
+                        <i class="fas fa-tachometer-alt"></i> Dashboard
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    {% if messages %}
+    <div class="container">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible" id="msg-{{ forloop.counter }}">
+            <span>{{ message }}</span>
+            <button type="button" class="alert-close" onclick="this.parentElement.remove()">&times;</button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <h3><i class="fas fa-pen-fancy"></i> BlogProfile</h3>
+                    <p>A modern blog platform built with Django. Share your thoughts, ideas, and stories with the world.</p>
+                    <div class="social-links">
+                        <a href="#" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" title="Twitter"><i class="fab fa-twitter"></i></a>
+                        <a href="#" title="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="#" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" title="GitHub"><i class="fab fa-github"></i></a>
+                    </div>
+                </div>
+                <div class="footer-links">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="{% url 'home' %}">Home</a></li>
+                        <li><a href="{% url 'about' %}">About</a></li>
+                        <li><a href="{% url 'contact' %}">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>Categories</h4>
+                    <ul>
+                        {% for cat in all_categories|slice:":5" %}
+                        <li><a href="{% url 'category_posts' cat.slug %}">{{ cat.name }}</a></li>
+                        {% empty %}
+                        <li><a href="#">No categories</a></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>Recent Posts</h4>
+                    <ul>
+                        {% for post in recent_posts|slice:":4" %}
+                        <li><a href="{% url 'post_detail' post.slug %}">{{ post.title|truncatechars:30 }}</a></li>
+                        {% empty %}
+                        <li><a href="#">No posts yet</a></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; {% now "Y" %} BlogProfile. All rights reserved. Made with <i class="fas fa-heart" style="color: #ef4444;"></i> & Django.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="{% static 'js/main.js' %}"></script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+{% extends 'dashboard/base.html' %}
+{% block content %}
+
+<div class="card" style="max-width: 500px; margin: 40px auto;">
+    <div class="card-header">
+        <h3><i class="fas fa-trash" style="color: #ef4444;"></i> Delete Post</h3>
+    </div>
+    <div class="card-body" style="text-align: center; padding: 40px;">
+        <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: #f59e0b; margin-bottom: 16px;"></i>
+        <h4 style="margin-bottom: 12px;">Are you sure?</h4>
+        <p style="color: var(--text-light); margin-bottom: 24px;">
+            You are about to delete "{{ post.title }}". This action cannot be undone.
+        </p>
+        <form method="POST">
+            {% csrf_token %}
+            <div style="display: flex; gap: 12px; justify-content: center;">
+                <button type="submit" class="btn btn-danger">
+                    <i class="fas fa-trash"></i> Yes, Delete
+                </button>
+                <a href="{% url 'dashboard_posts' %}" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

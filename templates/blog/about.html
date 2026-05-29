@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<section class="about-section">
+    <div class="container">
+        <div class="about-grid">
+            <div class="about-content">
+                <h1>About BlogProfile</h1>
+                <p>
+                    Welcome to BlogProfile — a modern blogging platform where ideas come to life. 
+                    We believe in the power of words to inspire, educate, and connect people from all walks of life.
+                </p>
+                <p>
+                    Our mission is to provide a space for writers, thinkers, and creatives to share their stories 
+                    with the world. Whether you're a seasoned writer or just starting your journey, BlogProfile 
+                    is here to amplify your voice.
+                </p>
+                <p>
+                    Built with Django, we combine the power of Python with modern web technologies to deliver 
+                    a fast, secure, and beautiful blogging experience.
+                </p>
+            </div>
+            <div class="about-image">
+                <i class="fas fa-pen-fancy"></i>
+                <h3>Write. Share. Inspire.</h3>
+                <p style="opacity: 0.8; margin-top: 10px;">Join our growing community</p>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <i class="fas fa-newspaper"></i>
+                <h3>{{ all_categories|length }}+</h3>
+                <p>Categories</p>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-users"></i>
+                <h3>100+</h3>
+                <p>Readers</p>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-clock"></i>
+                <h3>24/7</h3>
+                <p>Available</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

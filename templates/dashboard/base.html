@@ -1,0 +1,129 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if page_title %}{{ page_title }} | {% endif %}BlogProfile Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+</head>
+<body>
+    <div class="dashboard-layout">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <a href="{% url 'dashboard_home' %}" class="sidebar-brand">
+                    <i class="fas fa-pen-fancy"></i>
+                    <span>BlogProfile</span>
+                </a>
+                <button class="sidebar-close" id="sidebarClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li>
+                        <a href="{% url 'dashboard_home' %}" class="{% if request.resolver_match.url_name == 'dashboard_home' %}active{% endif %}">
+                            <i class="fas fa-th-large"></i> <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-section">Content</li>
+                    <li>
+                        <a href="{% url 'dashboard_posts' %}" class="{% if 'posts' in request.resolver_match.url_name %}active{% endif %}">
+                            <i class="fas fa-newspaper"></i> <span>Posts</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'dashboard_categories' %}" class="{% if 'categories' in request.resolver_match.url_name %}active{% endif %}">
+                            <i class="fas fa-folder"></i> <span>Categories</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'dashboard_tags' %}" class="{% if 'tags' in request.resolver_match.url_name %}active{% endif %}">
+                            <i class="fas fa-tags"></i> <span>Tags</span>
+                        </a>
+                    </li>
+                    <li class="nav-section">Engagement</li>
+                    <li>
+                        <a href="{% url 'dashboard_comments' %}" class="{% if 'comments' in request.resolver_match.url_name %}active{% endif %}">
+                            <i class="fas fa-comments"></i> <span>Comments</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'dashboard_messages' %}" class="{% if 'messages' in request.resolver_match.url_name %}active{% endif %}">
+                            <i class="fas fa-envelope"></i> <span>Messages</span>
+                            {% if total_messages %}
+                            <span class="badge">{{ total_messages }}</span>
+                            {% endif %}
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="{% url 'home' %}" target="_blank"><i class="fas fa-external-link-alt"></i> <span>View Site</span></a>
+                <a href="{% url 'dashboard_logout' %}"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="topbar">
+                <button class="topbar-toggle" id="sidebarToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="topbar-title">
+                    <h2>{{ page_title }}</h2>
+                </div>
+                <div class="topbar-user">
+                    <i class="fas fa-user-circle"></i>
+                    <span>{{ user.username }}</span>
+                </div>
+            </header>
+
+            {% if messages %}
+            <div style="padding: 0 30px;">
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible" id="msg-{{ forloop.counter }}">
+                    {{ message }}
+                    <button type="button" class="alert-close" onclick="this.parentElement.remove()">&times;</button>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <div class="content-wrapper">
+                {% block content %}{% endblock %}
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebar = document.getElementById('sidebar');
+            const toggle = document.getElementById('sidebarToggle');
+            const close = document.getElementById('sidebarClose');
+
+            if (toggle) {
+                toggle.addEventListener('click', function() {
+                    sidebar.classList.toggle('active');
+                });
+            }
+            if (close) {
+                close.addEventListener('click', function() {
+                    sidebar.classList.remove('active');
+                });
+            }
+
+            const alerts = document.querySelectorAll('.alert-dismissible');
+            alerts.forEach(function(alert) {
+                setTimeout(function() {
+                    alert.style.opacity = '0';
+                    setTimeout(function() { alert.remove(); }, 300);
+                }, 5000);
+            });
+        });
+    </script>
+</body>
+</html>

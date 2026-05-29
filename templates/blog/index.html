@@ -1,0 +1,183 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+{% if featured_posts %}
+<section class="hero">
+    <div class="container">
+        <div class="hero-content">
+            <h1>Welcome to BlogProfile</h1>
+            <p>Discover stories, thinking, and expertise from writers on any topic that matters to you.</p>
+            <a href="#posts" class="btn btn-primary">
+                <i class="fas fa-arrow-down"></i> Explore Posts
+            </a>
+        </div>
+    </div>
+</section>
+
+<section class="featured-section">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">Featured Posts</h2>
+            <p class="section-subtitle">Hand-picked articles worth reading</p>
+        </div>
+        <div class="featured-grid">
+            {% for post in featured_posts %}
+            <a href="{% url 'post_detail' post.slug %}" class="featured-card">
+                {% if post.featured_image %}
+                <img src="{{ post.featured_image.url }}" alt="{{ post.title }}">
+                {% else %}
+                <div class="post-card-image-placeholder">
+                    <i class="fas fa-newspaper"></i>
+                </div>
+                {% endif %}
+                <div class="featured-overlay">
+                    {% if post.category %}
+                    <span class="category-badge">{{ post.category.name }}</span>
+                    {% endif %}
+                    <h3>{{ post.title }}</h3>
+                    <div class="meta">
+                        <span><i class="fas fa-user"></i> {{ post.author.username }}</span>
+                        <span><i class="fas fa-calendar"></i> {{ post.created_at|date:"M d, Y" }}</span>
+                        <span><i class="fas fa-clock"></i> {{ post.created_at|timesince }} ago</span>
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% else %}
+<section class="hero">
+    <div class="container">
+        <div class="hero-content">
+            <h1>Welcome to BlogProfile</h1>
+            <p>Discover stories, thinking, and expertise from writers on any topic that matters to you.</p>
+            <a href="#posts" class="btn btn-primary">
+                <i class="fas fa-arrow-down"></i> Explore Posts
+            </a>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<section class="posts-section" id="posts">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">Latest Posts</h2>
+            <p class="section-subtitle">Explore the latest articles and insights</p>
+        </div>
+
+        <div class="blog-layout">
+            <div class="blog-main">
+                <div class="posts-grid">
+                    {% for post in posts %}
+                    <article class="post-card">
+                        <a href="{% url 'post_detail' post.slug %}">
+                            {% if post.featured_image %}
+                            <img src="{{ post.featured_image.url }}" alt="{{ post.title }}" class="post-card-image">
+                            {% else %}
+                            <div class="post-card-image-placeholder">
+                                <i class="fas fa-newspaper"></i>
+                            </div>
+                            {% endif %}
+                        </a>
+                        <div class="post-card-body">
+                            {% if post.category %}
+                            <a href="{% url 'category_posts' post.category.slug %}" class="category-badge">{{ post.category.name }}</a>
+                            {% endif %}
+                            <h3><a href="{% url 'post_detail' post.slug %}">{{ post.title }}</a></h3>
+                            <p>{{ post.excerpt|truncatechars:150 }}</p>
+                            <div class="post-card-meta">
+                                <span><i class="fas fa-user"></i> {{ post.author.username }}</span>
+                                <span><i class="fas fa-calendar"></i> {{ post.created_at|date:"M d, Y" }}</span>
+                                <span><i class="fas fa-comment"></i> {{ post.total_comments }}</span>
+                                <span><i class="fas fa-heart"></i> {{ post.total_likes }}</span>
+                            </div>
+                        </div>
+                    </article>
+                    {% empty %}
+                    <div style="grid-column: 1/-1; text-align: center; padding: 60px 20px;">
+                        <i class="fas fa-newspaper" style="font-size: 3rem; color: var(--text-lighter); margin-bottom: 16px;"></i>
+                        <h3>No Posts Yet</h3>
+                        <p style="color: var(--text-light);">Check back soon for new content!</p>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                {% if posts.has_other_pages %}
+                <div class="pagination">
+                    {% if posts.has_previous %}
+                    <a href="?page={{ posts.previous_page_number }}"><i class="fas fa-chevron-left"></i></a>
+                    {% endif %}
+                    {% for i in posts.paginator.page_range %}
+                        {% if posts.number == i %}
+                        <span class="current">{{ i }}</span>
+                        {% else %}
+                        <a href="?page={{ i }}">{{ i }}</a>
+                        {% endif %}
+                    {% endfor %}
+                    {% if posts.has_next %}
+                    <a href="?page={{ posts.next_page_number }}"><i class="fas fa-chevron-right"></i></a>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+
+            <aside class="sidebar">
+                <div class="sidebar-widget">
+                    <h4>Categories</h4>
+                    <ul class="sidebar-links">
+                        {% for cat in all_categories %}
+                        <li>
+                            <a href="{% url 'category_posts' cat.slug %}">
+                                {{ cat.name }}
+                                <span>{{ cat.posts.count }}</span>
+                            </a>
+                        </li>
+                        {% empty %}
+                        <li><a href="#">No categories</a></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="sidebar-widget">
+                    <h4>Tags</h4>
+                    <div class="sidebar-tags">
+                        {% for tag in all_tags %}
+                        <a href="{% url 'tag_posts' tag.slug %}" class="tag-badge">{{ tag.name }}</a>
+                        {% empty %}
+                        <span>No tags</span>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="sidebar-widget">
+                    <h4>Recent Posts</h4>
+                    <ul class="sidebar-links">
+                        {% for post in recent_posts %}
+                        <li>
+                            <a href="{% url 'post_detail' post.slug %}">
+                                {{ post.title|truncatechars:40 }}
+                            </a>
+                        </li>
+                        {% empty %}
+                        <li><a href="#">No recent posts</a></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </aside>
+        </div>
+    </div>
+</section>
+
+<style>
+    .blog-layout {
+        display: grid;
+        grid-template-columns: 1fr 320px;
+        gap: 40px;
+        align-items: start;
+    }
+    @media (max-width: 992px) {
+        .blog-layout { grid-template-columns: 1fr; }
+    }
+</style>
+{% endblock %}
